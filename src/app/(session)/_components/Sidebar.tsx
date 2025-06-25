@@ -5,6 +5,7 @@ import { PiPlusBold } from "react-icons/pi";
 import SidebarClosedIcon from "../../../common/ui/icons/SidebarClosedIcon";
 import SidebarHoverIcon from "../../../common/ui/icons/SidebarHoverIcon";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 interface SidebarLink {
   label: string;
@@ -13,17 +14,16 @@ interface SidebarLink {
 
 interface SidebarProps {
   links: SidebarLink[];
-  onCreateClick?: () => void;
   className?: string;
 }
 
-export default function Sidebar({
-  links,
-  onCreateClick,
-  className = "",
-}: SidebarProps) {
+export default function Sidebar({ links, className = "" }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hovering, setHovering] = useState(false);
+
+  function transactionNew() {
+    redirect("/movimentacao/new");
+  }
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
@@ -53,7 +53,7 @@ export default function Sidebar({
 
         {!isOpen && (
           <button
-            onClick={onCreateClick}
+            onClick={transactionNew}
             className="bg-green-600 hover:bg-green-700 w-10 h-10 flex items-center justify-center rounded-full"
           >
             <PiPlusBold className="text-zinc-300" size={22} />
@@ -79,7 +79,7 @@ export default function Sidebar({
               </p>
               <p className="text-sm text-zinc-400">É fácil e prático</p>
               <button
-                onClick={onCreateClick}
+                onClick={transactionNew}
                 className="bg-green-700 h-10 hover:bg-green-800 transition mt-3 text-sm font-bold text-white px-3 py-1 rounded-full hover:opacity-80"
               >
                 Criar Movimentação

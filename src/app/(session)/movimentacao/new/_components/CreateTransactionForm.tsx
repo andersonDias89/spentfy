@@ -7,6 +7,8 @@ import { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { createTransaction } from "@/app/(session)/movimentacao/new/_actions/create-transaction";
 import { transactionSchema } from "../_schema/create-transaction-schema";
+import { Toast } from "@/common/ui/Toast";
+import { Input } from "@/common/ui/Input";
 
 type CreateTransactionFormData = z.infer<typeof transactionSchema>;
 
@@ -64,24 +66,14 @@ export default function CreateTransactionForm({
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <div className="relative">
-        {/* Toast no topo da tela */}
-        {showToast && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-2 rounded shadow-lg z-50 animate-slideDown">
-            Movimentação criada com sucesso!
-          </div>
-        )}
+        <Toast show={showToast} message="Movimentação criada com sucesso!" />
 
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-zinc-800 p-4 rounded space-y-4 text-white relative"
         >
           <div>
-            <label className="block text-sm mb-1">Título</label>
-            <input
-              type="text"
-              {...register("title")}
-              className="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-sm"
-            />
+            <Input placeholder="Descrição" type="text" {...register("title")} />
             {errors.title && (
               <p className="text-red-400 text-xs mt-1">
                 {errors.title.message}
@@ -90,12 +82,10 @@ export default function CreateTransactionForm({
           </div>
 
           <div>
-            <label className="block text-sm mb-1">Valor</label>
-            <input
+            <Input
               type="number"
               step="0.01"
               {...register("amount", { valueAsNumber: true })}
-              className="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-sm"
             />
             {errors.amount && (
               <p className="text-red-400 text-xs mt-1">
@@ -105,12 +95,7 @@ export default function CreateTransactionForm({
           </div>
 
           <div>
-            <label className="block text-sm mb-1">Categoria</label>
-            <input
-              type="text"
-              {...register("category")}
-              className="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-sm"
-            />
+            <Input type="text" {...register("category")} />
             {errors.category && (
               <p className="text-red-400 text-xs mt-1">
                 {errors.category.message}
@@ -157,12 +142,6 @@ export default function CreateTransactionForm({
           </button>
         </form>
       </div>
-
-      {showToast && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-2 rounded shadow-lg z-50 animate-slideDown">
-          Movimentação criada com sucesso!
-        </div>
-      )}
     </Suspense>
   );
 }

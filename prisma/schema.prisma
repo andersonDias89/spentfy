@@ -89,7 +89,7 @@ enum TransactionType {
 model Transaction {
   id        String           @id @default(uuid())
   title     String
-  amount    Float
+  amount Decimal @db.Decimal(10, 2)
   type      TransactionType
   category  String
   date      DateTime         @default(now())

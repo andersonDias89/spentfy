@@ -1,20 +1,24 @@
 import { auth } from "@/lib/auth";
-import CreateTransactionForm from "@/app/(session)/movimentacao/new/_components/CreateTransactionForm";
 import { redirect } from "next/navigation";
+import { getTransactionsByUser } from "./_actions/get-transactions";
+import MovimentacaoClient from "./MovimentacaoClient";
 
-export default async function NovaMovimentacaoPage() {
+export default async function MovimentacaoPage() {
   const session = await auth();
+  if (!session?.user?.id) return redirect("/");
 
-  if (!session?.user?.id) {
-    return redirect("/");
-  }
+  const transactions = await getTransactionsByUser(session.user.id);
 
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="p-4 grid-cols-2 w-200">
-        <h1 className="text-xl font-bold mb-4">Nova Movimentação</h1>
-        <CreateTransactionForm userId={session.user.id} />
-      </div>
-    </div>
+    <MovimentacaoClient
+      userId={session.user.id}
+      transactions={transactions.map((t) => ({
+        ...t,
+        amount:
+          typeof t.amount === "object" && "toNumber" in t.amount
+            ? t.amount.toNumber()
+            : t.amount,
+      }))}
+    />
   );
 }

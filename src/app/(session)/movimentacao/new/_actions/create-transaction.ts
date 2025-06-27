@@ -5,11 +5,22 @@ import { CreateTransaction } from "@/types/new-transaction";
 
 export async function createTransaction(data: CreateTransaction) {
   try {
+    const dataTransacao = new Date(data.date);
+    const agora = new Date();
+    agora.setHours(0, 0, 0, 0); // Zera hora para comparar só a data
+
+    if (dataTransacao < agora) {
+      return {
+        success: false,
+        message: "A data da transação não pode ser no passado.",
+      };
+    }
+
     await prisma.transaction.create({
       data: {
         ...data,
         amount: Number(data.amount),
-        date: new Date(data.date), // garantir formato Date
+        date: dataTransacao, // garantir formato Date
       },
     });
 

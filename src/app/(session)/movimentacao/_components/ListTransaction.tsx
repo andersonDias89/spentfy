@@ -25,19 +25,19 @@ export default function ListTransaction({
   }
 
   return (
-    <ul className="divide-y divide-gray-200 bg-white rounded-lg shadow-md overflow-hidden">
+    <ul className="divide-y divide-gray-200 bg-zinc-900 rounded-lg shadow-md overflow-hidden">
       {transactions.map((tx) => (
         <li
           key={tx.id}
-          className={`flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors ${
+          className={`flex items-center justify-between px-6 py-4 hover:bg-zinc-800 transition-colors ${
             tx.type === "INCOME"
-              ? "border-l-4 border-green-500"
-              : "border-l-4 border-red-500"
+              ? "border-l-4 border-green-800"
+              : "border-l-4 border-red-900"
           }`}
         >
           <div>
-            <div className="font-semibold text-gray-800">{tx.title}</div>
-            <div className="text-xs text-gray-500">
+            <div className="font-semibold text-white">{tx.title}</div>
+            <div className="text-xs text-zinc-400">
               {format(new Date(tx.date), "dd/MM/yyyy")}
             </div>
           </div>

@@ -7,12 +7,13 @@ export default async function MovimentacaoPage() {
   const session = await auth();
   if (!session?.user?.id) return redirect("/");
 
-  const transactions = await getTransactionsByUser(session.user.id);
+  // Buscar dados iniciais do servidor (será usado como fallback)
+  const initialTransactions = await getTransactionsByUser(session.user.id);
 
   return (
     <MovimentacaoClient
       userId={session.user.id}
-      transactions={transactions.map((t) => ({
+      initialTransactions={initialTransactions.map((t) => ({
         ...t,
         amount:
           typeof t.amount === "object" && "toNumber" in t.amount

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
-import { createTransaction } from "@/app/(session)/movimentacao/new/_actions/create-transaction";
+import { useCreateTransaction } from "@/hooks/useTransactions";
 import { transactionSchema } from "../_schema/create-transaction-schema";
 import { Toast } from "@/common/ui/Toast";
 import { Input } from "@/common/ui/Input";
@@ -24,6 +24,7 @@ export default function CreateTransactionForm({
   onSuccess,
 }: CreateTransactionFormProps) {
   const router = useRouter();
+  const { createTransactionWithCache } = useCreateTransaction();
 
   const {
     register,
@@ -47,7 +48,7 @@ export default function CreateTransactionForm({
   async function onSubmit(data: CreateTransactionFormData) {
     setError("");
 
-    const result = await createTransaction(data);
+    const result = await createTransactionWithCache(data);
 
     if (!result.success) {
       setError(result.message ?? "Erro ao salvar transação.");
@@ -55,7 +56,10 @@ export default function CreateTransactionForm({
     }
 
     reset({ ...data, userId });
+
+    // Chama onSuccess para fechar o accordion ou fazer outras ações de UI
     onSuccess?.();
+
     setShowToast(true);
 
     setTimeout(() => {

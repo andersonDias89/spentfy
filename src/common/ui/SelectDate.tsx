@@ -79,4 +79,4 @@ export const DateSelect = forwardRef<HTMLInputElement, DateSelectProps>(
   }
 );
 
-DateSelect.displayName;
+DateSelect.displayName = "DateSelect";

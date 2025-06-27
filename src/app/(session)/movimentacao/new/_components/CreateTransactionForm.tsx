@@ -67,12 +67,12 @@ export default function CreateTransactionForm({
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <div className="relative">
+      <div className="w-full">
         <Toast show={showToast} message="Movimentação criada com sucesso!" />
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-zinc-800 p-4 rounded space-y-4 text-white relative"
+          className="bg-zinc-7 w-full rounded-md space-y-4 text-white grid grid-cols-5 gap-3"
         >
           <Input
             label="Descrição"
@@ -118,14 +118,16 @@ export default function CreateTransactionForm({
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm font-semibold flex items-center gap-2"
-          >
-            {isSubmitting && <LoadingSpinner size={4} />}{" "}
-            {isSubmitting ? "Salvando..." : "Criar Movimentação"}
-          </button>
+          <div className="grid col-1">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-green-600 hover:bg-green-700 w-52 px-4 py-2 rounded text-sm font-semibold flex items-center gap-2"
+            >
+              {isSubmitting && <LoadingSpinner size={4} />}{" "}
+              {isSubmitting ? "Salvando..." : "Criar Movimentação"}
+            </button>
+          </div>
         </form>
       </div>
     </Suspense>

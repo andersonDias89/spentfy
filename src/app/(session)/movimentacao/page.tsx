@@ -10,9 +10,11 @@ export default async function NovaMovimentacaoPage() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Nova Movimentação</h1>
-      <CreateTransactionForm userId={session.user.id} />
+    <div className="flex items-center justify-center h-full">
+      <div className="p-4 grid-cols-2 w-200">
+        <h1 className="text-xl font-bold mb-4">Nova Movimentação</h1>
+        <CreateTransactionForm userId={session.user.id} />
+      </div>
     </div>
   );
 }

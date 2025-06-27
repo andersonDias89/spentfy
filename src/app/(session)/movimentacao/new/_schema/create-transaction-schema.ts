@@ -8,7 +8,6 @@ export const transactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE"], {
     required_error: "Campo obrigatório",
   }),
-  category: z.string().min(1, "Campo obrigatório"),
   date: z.string().min(1, "Campo obrigatório"),
   userId: z.string(),
 });

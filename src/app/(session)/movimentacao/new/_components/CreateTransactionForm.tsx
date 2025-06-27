@@ -35,7 +35,6 @@ export default function CreateTransactionForm({
     defaultValues: {
       title: "",
       amount: undefined,
-      category: "",
       type: "INCOME",
       date: "",
       userId,
@@ -89,14 +88,6 @@ export default function CreateTransactionForm({
             step="0.01"
             {...register("amount", { valueAsNumber: true })}
             error={errors.amount?.message}
-          />
-
-          <Input
-            label="Categoria"
-            placeholder="Categoria"
-            type="text"
-            {...register("category")}
-            error={errors.category?.message}
           />
 
           <Select

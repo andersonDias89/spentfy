@@ -19,12 +19,42 @@ body {
 }
 
 /* 🔧 Corrige o autofill azul do Chrome */
-input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px var(--background) inset !important;
-  -webkit-text-fill-color: var(--foreground) !important;
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #3f3f46 inset !important;
+  box-shadow: 0 0 0 1000px #3f3f46 inset !important;
+  -webkit-text-fill-color: #ededed !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-input:-webkit-autofill:focus {
-  box-shadow: 0 0 0px 1000px var(--background) inset !important;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove as setas do input type="number" no Firefox */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Esconde o ícone nativo do input date */
+.hide-date-icon::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+.hide-date-icon::-webkit-input-placeholder {
+  color: #888;
+}
+.hide-date-icon::-moz-placeholder {
+  color: #888;
+}
+.hide-date-icon:-ms-input-placeholder {
+  color: #888;
+}
+.hide-date-icon::placeholder {
+  color: #888;
 }

@@ -7,6 +7,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: ReactNode;
   showTogglePassword?: boolean;
   error?: string;
+  variant?: "default" | "outlined" | "filled";
+  className?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -16,6 +18,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       icon,
       type = "text",
       showTogglePassword = false,
+      size = "medium",
+      variant = "default",
       className,
       error,
       ...props
@@ -32,43 +36,57 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           : "password"
         : type;
 
+    const sizeClasses = {
+      small: "px-2 py-1 text-xs",
+      medium: "px-4 py-3 text-sm",
+      large: "px-6 py-4 text-base",
+    };
+
+    const variantClasses = {
+      default: "bg-zinc-900 border-gray-600 focus-within:ring-blue-500",
+      outlined: "bg-transparent border-gray-600 focus-within:ring-blue-500",
+      filled: "bg-gray-700 border-gray-600 focus-within:ring-blue-500",
+    };
+
+    const inputClasses = clsx(
+      "flex items-center rounded-xl border transition-all focus-within:ring-2",
+      sizeClasses[size as keyof typeof sizeClasses],
+      variantClasses[variant],
+      className
+    );
+
     return (
       <div className="w-full">
-        {label && (
-          <label className="block text-sm text-gray-400 mb-1 ml-1">
-            {label}
-          </label>
-        )}
-        <div
-          className={clsx(
-            "flex items-center px-4 py-3 rounded-xl border transition-all",
-            "bg-[#1e1e2f] text-white focus-within:ring-2",
-            error
-              ? "border-red-400 focus-within:ring-red-500"
-              : "border-gray-600 focus-within:ring-blue-500",
-            className
+        <div className="w-full">
+          {label && (
+            <label className="block text-sm text-white mb-1 ml-1">
+              {label}
+            </label>
           )}
-        >
-          {icon && <div className="mr-3 text-gray-400">{icon}</div>}
-          <input
-            ref={ref}
-            type={inputType}
-            className="bg-transparent outline-none w-full placeholder:text-gray-500 text-sm"
-            {...props}
-          />
-          {isPassword && showTogglePassword && (
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 hover:text-white transition"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+          <div className={inputClasses}>
+            {icon && <div className="mr-3 text-gray-400">{icon}</div>}
+            <input
+              ref={ref}
+              type={inputType}
+              className="bg-transparent outline-none w-full placeholder:text-zinc-700"
+              {...props}
+            />
+            {isPassword && showTogglePassword && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-white transition"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            )}
+          </div>
+          {error && (
+            <span className="text-xs text-red-400 mt-1 ml-1 block">
+              {error}
+            </span>
           )}
         </div>
-        {error && (
-          <span className="text-xs text-red-400 mt-1 ml-1 block">{error}</span>
-        )}
       </div>
     );
   }

@@ -9,6 +9,8 @@ import { createTransaction } from "@/app/(session)/movimentacao/new/_actions/cre
 import { transactionSchema } from "../_schema/create-transaction-schema";
 import { Toast } from "@/common/ui/Toast";
 import { Input } from "@/common/ui/Input";
+import { Select } from "@/common/ui/Select";
+import { DateSelect } from "@/common/ui/SelectDate";
 
 type CreateTransactionFormData = z.infer<typeof transactionSchema>;
 
@@ -32,7 +34,7 @@ export default function CreateTransactionForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
       title: "",
-      amount: 0,
+      amount: undefined,
       category: "",
       type: "INCOME",
       date: "",
@@ -72,63 +74,47 @@ export default function CreateTransactionForm({
           onSubmit={handleSubmit(onSubmit)}
           className="bg-zinc-800 p-4 rounded space-y-4 text-white relative"
         >
-          <div>
-            <Input placeholder="Descrição" type="text" {...register("title")} />
-            {errors.title && (
-              <p className="text-red-400 text-xs mt-1">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Descrição"
+            placeholder="Descrição"
+            type="text"
+            {...register("title")}
+            error={errors.title?.message}
+          />
 
-          <div>
-            <Input
-              type="number"
-              step="0.01"
-              {...register("amount", { valueAsNumber: true })}
-            />
-            {errors.amount && (
-              <p className="text-red-400 text-xs mt-1">
-                {errors.amount.message}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Valor"
+            type="number"
+            placeholder="Digite o valor"
+            step="0.01"
+            {...register("amount", { valueAsNumber: true })}
+            error={errors.amount?.message}
+          />
 
-          <div>
-            <Input type="text" {...register("category")} />
-            {errors.category && (
-              <p className="text-red-400 text-xs mt-1">
-                {errors.category.message}
-              </p>
-            )}
-          </div>
+          <Input
+            label="Categoria"
+            placeholder="Categoria"
+            type="text"
+            {...register("category")}
+            error={errors.category?.message}
+          />
 
-          <div>
-            <label className="block text-sm mb-1">Tipo</label>
-            <select
-              {...register("type")}
-              className="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-sm"
-            >
-              <option value="">Selecione</option>
-              <option value="INCOME">Entrada</option>
-              <option value="EXPENSE">Saída</option>
-            </select>
-            {errors.type && (
-              <p className="text-red-400 text-xs mt-1">{errors.type.message}</p>
-            )}
-          </div>
+          <Select
+            label="Tipo"
+            {...register("type")}
+            options={[
+              { value: "", label: "Selecione" },
+              { value: "INCOME", label: "Entrada" },
+              { value: "EXPENSE", label: "Saída" },
+            ]}
+            error={errors.type?.message}
+          />
 
-          <div>
-            <label className="block text-sm mb-1">Data</label>
-            <input
-              type="date"
-              {...register("date")}
-              className="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-sm"
-            />
-            {errors.date && (
-              <p className="text-red-400 text-xs mt-1">{errors.date.message}</p>
-            )}
-          </div>
+          <DateSelect
+            label="Data"
+            {...register("date")}
+            error={errors.date?.message}
+          />
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 

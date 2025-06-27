@@ -66,12 +66,12 @@ export default function CreateTransactionForm({
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <div className="w-full">
+      <div className="">
         <Toast show={showToast} message="Movimentação criada com sucesso!" />
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-zinc-7 w-full rounded-md space-y-4 text-white grid grid-cols-5 gap-3"
+          className="w-150 rounded-md space-y-4 text-white grid grid-cols-2 gap-3"
         >
           <Input
             label="Descrição"

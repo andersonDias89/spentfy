@@ -11,7 +11,7 @@ export default async function CreateTransactionPage() {
   }
 
   return (
-    <div className="p-8 mx-auto w-full bg-zinc-800  rounded-md">
+    <div className="p-8 mx-auto w-full rounded-md">
       <h1 className="text-xl font-bold text-white mb-4">Nova movimentação</h1>
 
       <CreateTransactionForm userId={session.user.id} />

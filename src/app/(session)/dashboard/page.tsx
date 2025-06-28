@@ -1,12 +1,12 @@
-// app/dashboard/page.tsx
-import { auth } from "@/lib/auth"; // ou onde estiver seu arquivo de auth
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/constants";
 
 export default async function DashboardPage() {
-  const session = await auth(); // já traz a sessão do usuário
+  const session = await auth();
 
   if (!session) {
-    redirect("/");
+    redirect(ROUTES.HOME);
   }
 
   return (

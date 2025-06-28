@@ -1,18 +1,8 @@
 "use client";
 
-import HeaderAccordion from "./_components/HeaderAccordion";
-import ListTransaction from "./_components/ListTransaction";
+import { HeaderAccordion, ListTransaction } from "@/components";
 import { useTransactions } from "@/hooks/useTransactions";
-
-// Importa o tipo Transaction do ListTransaction para garantir compatibilidade
-// Usa o mesmo tipo Transaction do ListTransaction
-type Transaction = {
-  id: string;
-  title: string;
-  date: string | Date;
-  amount: number;
-  type: "INCOME" | "EXPENSE";
-};
+import { Transaction } from "@/lib/types/transaction";
 
 interface MovimentacaoClientProps {
   userId: string;
@@ -23,32 +13,18 @@ export default function MovimentacaoClient({
   userId,
   initialTransactions = [],
 }: MovimentacaoClientProps) {
-  console.log(
-    "[MovimentacaoClient] Componente montado. userId recebido:",
-    userId
-  );
   // Usar o hook de cache para buscar transações
   const { transactions, isLoading, error, refresh } = useTransactions(userId, {
     revalidateOnFocus: false,
-    refreshInterval: 0, // Não revalidar automaticamente
-  });
-  console.log("[MovimentacaoClient] Dados recebidos do hook useTransactions:", {
-    transactions,
-    isLoading,
-    error,
+    refreshInterval: 0,
   });
 
   function handleSuccess() {
-    console.log(
-      "[MovimentacaoClient] handleSuccess chamado. O cache já foi atualizado automaticamente pelo hook de criação."
-    );
     // O hook createTransactionWithCache já faz toda a gestão de cache automaticamente
-    // Não precisamos fazer nada aqui, apenas fechar o accordion
   }
 
   // Mostrar loading enquanto carrega
   if (isLoading) {
-    console.log("[MovimentacaoClient] Estado: carregando transações...");
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
         <div className="flex items-center justify-center py-8">
@@ -60,10 +36,6 @@ export default function MovimentacaoClient({
 
   // Mostrar erro se houver
   if (error) {
-    console.log(
-      "[MovimentacaoClient] Estado: erro ao carregar transações:",
-      error
-    );
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
@@ -96,12 +68,7 @@ export default function MovimentacaoClient({
           Minhas Movimentações
         </h2>
         <button
-          onClick={() => {
-            console.log(
-              "[MovimentacaoClient] Botão de atualizar clicado. Vai forçar refresh das transações."
-            );
-            refresh();
-          }}
+          onClick={() => refresh()}
           className="text-sm text-blue-600 hover:text-blue-800 underline"
           disabled={isLoading}
         >

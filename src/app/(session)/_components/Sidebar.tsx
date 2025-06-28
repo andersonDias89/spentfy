@@ -5,7 +5,8 @@ import { PiPlusBold } from "react-icons/pi";
 import SidebarClosedIcon from "../../../common/ui/icons/SidebarClosedIcon";
 import SidebarHoverIcon from "../../../common/ui/icons/SidebarHoverIcon";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/lib/constants";
 
 interface SidebarLink {
   label: string;
@@ -20,9 +21,10 @@ interface SidebarProps {
 export default function Sidebar({ links, className = "" }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const router = useRouter();
 
   function transactionNew() {
-    redirect("/movimentacao/new");
+    router.push(ROUTES.NEW_TRANSACTION);
   }
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import CreateTransactionForm from "../new/_components/CreateTransactionForm";
+import { CreateTransactionForm } from "@/components";
 
 interface HeaderAccordionProps {
   userId: string;

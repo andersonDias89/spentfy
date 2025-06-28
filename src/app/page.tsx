@@ -1,11 +1,12 @@
 import { Button } from "@/common/ui/Button";
 import { signIn } from "@/lib/auth";
+import { ROUTES } from "@/lib/constants";
 import { FaGithub } from "react-icons/fa";
 
 export default function Home() {
   async function handleRegister() {
     "use server";
-    await signIn("github", { redirectTo: "/dashboard" });
+    await signIn("github", { redirectTo: ROUTES.DASHBOARD });
   }
 
   return (

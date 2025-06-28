@@ -1,40 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { CacheService } from "@/lib/cache";
 import { auth } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const useCache = searchParams.get("cache") !== "false";
-
-    const cacheKey = CacheService.generateTransactionKey(session.user.id);
-
-    // Tentar buscar do cache primeiro
-    if (useCache) {
-      const cachedTransactions = CacheService.get(cacheKey);
-      if (cachedTransactions) {
-        return NextResponse.json(cachedTransactions);
-      }
-    }
-
-    // Se não estiver no cache, buscar do banco
+    // Buscar sempre dados frescos do banco - sem cache do servidor
     const transactions = await prisma.transaction.findMany({
       where: { userId: session.user.id },
       orderBy: { date: "desc" },
     });
 
-    // Salvar no cache
-    if (useCache) {
-      CacheService.set(cacheKey, transactions);
-    }
+    // Converter Decimal para number para serialização
+    const serializedTransactions = transactions.map(transaction => ({
+      ...transaction,
+      amount: Number(transaction.amount), // Converter Decimal para number
+    }));
 
-    return NextResponse.json(transactions);
+    // Adicionar headers para evitar cache do browser
+    const response = NextResponse.json(serializedTransactions);
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate"
+    );
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    return response;
   } catch (error) {
     console.error("Erro ao buscar transações:", error);
     return NextResponse.json(
@@ -45,7 +41,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  console.log("[POST] Recebendo requisição para criar transação");
   const body = await req.json();
+  console.log("[POST] Body recebido:", body);
 
   const transacao = await prisma.transaction.create({
     data: {
@@ -53,11 +51,19 @@ export async function POST(req: NextRequest) {
       date: new Date(body.date),
     },
   });
+  console.log("[POST] Transação criada:", transacao);
 
-  // Invalidar cache das transações do usuário
-  if (body.userId) {
-    CacheService.invalidateUserTransactions(body.userId);
-  }
+  // Converter Decimal para number para serialização
+  const serializedTransaction = {
+    ...transacao,
+    amount: Number(transacao.amount), // Converter Decimal para number
+  };
 
-  return NextResponse.json(transacao);
+  // Retornar com headers para evitar cache
+  const response = NextResponse.json(serializedTransaction);
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  return response;
 }

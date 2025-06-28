@@ -25,6 +25,10 @@ export default function CreateTransactionForm({
 }: CreateTransactionFormProps) {
   const router = useRouter();
   const { createTransactionWithCache } = useCreateTransaction();
+  console.log(
+    "[CreateTransactionForm] Componente montado. userId recebido:",
+    userId
+  );
 
   const {
     register,
@@ -48,6 +52,7 @@ export default function CreateTransactionForm({
   async function onSubmit(data: CreateTransactionFormData) {
     setError("");
 
+    // O hook já faz o optimistic update e invalidação do cache
     const result = await createTransactionWithCache(data);
 
     if (!result.success) {
@@ -55,11 +60,13 @@ export default function CreateTransactionForm({
       return;
     }
 
+    // Reset do formulário
     reset({ ...data, userId });
 
     // Chama onSuccess para fechar o accordion ou fazer outras ações de UI
     onSuccess?.();
 
+    // Toast de sucesso
     setShowToast(true);
 
     setTimeout(() => {

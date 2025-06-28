@@ -2,10 +2,7 @@
 
 import HeaderAccordion from "./_components/HeaderAccordion";
 import ListTransaction from "./_components/ListTransaction";
-import {
-  useTransactions,
-  useTransactionMutations,
-} from "@/hooks/useTransactions";
+import { useTransactions } from "@/hooks/useTransactions";
 
 // Importa o tipo Transaction do ListTransaction para garantir compatibilidade
 // Usa o mesmo tipo Transaction do ListTransaction
@@ -26,24 +23,32 @@ export default function MovimentacaoClient({
   userId,
   initialTransactions = [],
 }: MovimentacaoClientProps) {
+  console.log(
+    "[MovimentacaoClient] Componente montado. userId recebido:",
+    userId
+  );
   // Usar o hook de cache para buscar transações
   const { transactions, isLoading, error, refresh } = useTransactions(userId, {
     revalidateOnFocus: false,
     refreshInterval: 0, // Não revalidar automaticamente
   });
-
-  // Hook para invalidar cache após mutações
-  const { invalidateCache } = useTransactionMutations();
+  console.log("[MovimentacaoClient] Dados recebidos do hook useTransactions:", {
+    transactions,
+    isLoading,
+    error,
+  });
 
   function handleSuccess() {
-    // Invalidar cache para buscar dados atualizados
-    invalidateCache();
-    // Ou usar refresh() para revalidar imediatamente
-    refresh();
+    console.log(
+      "[MovimentacaoClient] handleSuccess chamado. O cache já foi atualizado automaticamente pelo hook de criação."
+    );
+    // O hook createTransactionWithCache já faz toda a gestão de cache automaticamente
+    // Não precisamos fazer nada aqui, apenas fechar o accordion
   }
 
   // Mostrar loading enquanto carrega
   if (isLoading) {
+    console.log("[MovimentacaoClient] Estado: carregando transações...");
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
         <div className="flex items-center justify-center py-8">
@@ -55,6 +60,10 @@ export default function MovimentacaoClient({
 
   // Mostrar erro se houver
   if (error) {
+    console.log(
+      "[MovimentacaoClient] Estado: erro ao carregar transações:",
+      error
+    );
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
@@ -74,6 +83,10 @@ export default function MovimentacaoClient({
   // Usar dados do cache ou dados iniciais como fallback
   const displayTransactions =
     transactions.length > 0 ? transactions : initialTransactions;
+  console.log(
+    "[MovimentacaoClient] Lista de transações que será exibida:",
+    displayTransactions
+  );
 
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
@@ -83,7 +96,12 @@ export default function MovimentacaoClient({
           Minhas Movimentações
         </h2>
         <button
-          onClick={() => refresh()}
+          onClick={() => {
+            console.log(
+              "[MovimentacaoClient] Botão de atualizar clicado. Vai forçar refresh das transações."
+            );
+            refresh();
+          }}
           className="text-sm text-blue-600 hover:text-blue-800 underline"
           disabled={isLoading}
         >

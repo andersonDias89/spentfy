@@ -13,13 +13,7 @@ export default async function MovimentacaoPage() {
   return (
     <MovimentacaoClient
       userId={session.user.id}
-      initialTransactions={initialTransactions.map((t) => ({
-        ...t,
-        amount:
-          typeof t.amount === "object" && "toNumber" in t.amount
-            ? t.amount.toNumber()
-            : t.amount,
-      }))}
+      initialTransactions={initialTransactions}
     />
   );
 }

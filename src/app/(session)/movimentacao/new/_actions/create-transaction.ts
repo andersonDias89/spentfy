@@ -1,13 +1,19 @@
 "use server";
 
-import { prisma } from "@/lib/prisma"; // ajuste o caminho se for diferente
+import { prisma } from "@/lib/prisma";
 import { CreateTransaction } from "@/types/new-transaction";
-import { auth } from "@/lib/auth"; // importe a função de autenticação
-import { CacheService } from "@/lib/cache";
+import { auth } from "@/lib/auth";
 
 export async function createTransaction(data: CreateTransaction) {
+  console.log(
+    "[createTransaction] Função chamada para criar nova transação. Dados recebidos:",
+    data
+  );
   const session = await auth();
   if (!session?.user?.id) {
+    console.log(
+      "[createTransaction] Falha de autenticação: usuário não está logado."
+    );
     return { success: false, message: "Não autenticado." };
   }
   try {
@@ -16,13 +22,16 @@ export async function createTransaction(data: CreateTransaction) {
     agora.setHours(0, 0, 0, 0); // Zera hora para comparar só a data
 
     if (dataTransacao < agora) {
+      console.log(
+        "[createTransaction] Data da transação no passado. Operação não permitida."
+      );
       return {
         success: false,
         message: "A data da transação não pode ser no passado.",
       };
     }
 
-    await prisma.transaction.create({
+    const novaTransacao = await prisma.transaction.create({
       data: {
         ...data,
         userId: session.user.id, // sempre use o userId da sessão!
@@ -30,13 +39,20 @@ export async function createTransaction(data: CreateTransaction) {
         date: dataTransacao, // garantir formato Date
       },
     });
+    console.log(
+      "[createTransaction] Transação criada com sucesso no banco de dados:",
+      novaTransacao
+    );
 
-    // Invalidar cache das transações do usuário
-    CacheService.invalidateUserTransactions(session.user.id);
+    // Converter Decimal para number para serialização
+    const serializedTransaction = {
+      ...novaTransacao,
+      amount: Number(novaTransacao.amount), // Converter Decimal para number
+    };
 
-    return { success: true, shouldRefresh: true };
+    return { success: true, data: serializedTransaction };
   } catch (error) {
-    console.error("Erro ao criar transação:", error);
+    console.error("[createTransaction] Erro ao criar transação:", error);
     return { success: false, message: "Erro ao salvar transação." };
   }
 }

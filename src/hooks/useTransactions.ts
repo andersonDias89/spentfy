@@ -21,7 +21,7 @@ interface CreateTransactionData {
 interface TransactionResponse {
   id: string;
   title: string;
-  amount: number | { toNumber: () => number };
+  amount: number; // Agora sempre number pois a API já converte
   type: "INCOME" | "EXPENSE";
   date: string;
   userId: string;
@@ -37,6 +37,12 @@ export function useTransactions(
   userId: string,
   options: UseTransactionsOptions = {}
 ) {
+  console.log(
+    "[useTransactions] Hook chamado. userId:",
+    userId,
+    "options:",
+    options
+  );
   const {
     refreshInterval = 0,
     revalidateOnFocus = false,
@@ -44,52 +50,82 @@ export function useTransactions(
   } = options;
 
   const fetcher = async (url: string): Promise<Transaction[]> => {
-    const response = await fetch(url);
+    console.log(`[useTransactions] Fetcher chamado para url: ${url}`);
+    const response = await fetch(url, {
+      cache: "no-store", // Força sempre buscar dados frescos
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
     if (!response.ok) {
+      console.error(
+        "[useTransactions] Erro ao carregar transações. Status:",
+        response.status
+      );
       throw new Error("Erro ao carregar transações");
     }
     const data: TransactionResponse[] = await response.json();
+    console.log("[useTransactions] Dados recebidos do backend:", data);
 
-    // Converter Decimal para number se necessário
-    return data.map((t: TransactionResponse) => ({
+    // Converter para Transaction format
+    const parsed = data.map((t: TransactionResponse) => ({
       ...t,
-      amount:
-        typeof t.amount === "object" && "toNumber" in t.amount
-          ? t.amount.toNumber()
-          : Number(t.amount),
+      amount: Number(t.amount), // Garantir que é number
       date: new Date(t.date),
     }));
+    console.log(
+      "[useTransactions] Dados convertidos para Transaction:",
+      parsed
+    );
+    return parsed;
   };
 
   const { data, error, isLoading, mutate } = useSWR<Transaction[]>(
-    userId ? `/api/transactions` : null,
+    userId ? `/api/transactions?userId=${userId}` : null,
     fetcher,
     {
       refreshInterval,
       revalidateOnFocus,
       revalidateOnReconnect,
-      dedupingInterval: 60000, // 1 minuto de deduplicação
+      dedupingInterval: 2000, // Reduzido para 2 segundos para atualização mais rápida
       errorRetryCount: 3,
       errorRetryInterval: 5000,
     }
   );
 
+  console.log("[useTransactions] Retorno do hook:", {
+    transactions: data || [],
+    isLoading,
+    error,
+  });
+
   return {
     transactions: data || [],
     isLoading,
     error,
-    refresh: mutate,
+    refresh: () => mutate(),
     isEmpty: data && data.length === 0,
+    // Função para atualizar com optimistic update
+    addTransactionOptimistic: (newTransaction: Transaction) => {
+      const currentData = data || [];
+      const updatedData = [newTransaction, ...currentData];
+      mutate(updatedData, false); // false = não revalidar imediatamente
+    },
   };
 }
 
 // Hook para revalidar cache após mutações
 export function useTransactionMutations() {
-  const invalidateCache = async () => {
-    console.log("🔄 Invalidando cache manualmente...");
-    // Usa mutate global para invalidar todas as instâncias
-    await mutate("/api/transactions", undefined, { revalidate: true });
-    console.log("✨ Cache invalidado manualmente!");
+  const invalidateCache = async (userId: string) => {
+    console.log("🔄 Invalidando cache do SWR...");
+    // Invalidar tanto a chave com userId quanto sem
+    await Promise.all([
+      mutate(`/api/transactions?userId=${userId}`, undefined, {
+        revalidate: true,
+      }),
+      mutate(`/api/transactions`, undefined, { revalidate: true }),
+    ]);
+    console.log("✨ Cache do SWR invalidado!");
   };
 
   return { invalidateCache };
@@ -101,29 +137,50 @@ export function useCreateTransaction() {
     try {
       console.log("🚀 Criando transação...", data);
 
-      // Criar a transação no servidor PRIMEIRO
+      // Optimistic update - adicionar à lista antes mesmo de salvar no servidor
+      const optimisticTransaction: Transaction = {
+        id: `temp-${Date.now()}`, // ID temporário
+        ...data,
+        date: new Date(data.date),
+        amount: Number(data.amount),
+      };
+
+      // Atualizar SWR com dados otimistas
+      const swrKey = `/api/transactions?userId=${data.userId}`;
+      await mutate(
+        swrKey,
+        (currentData: Transaction[] = []) => [
+          optimisticTransaction,
+          ...currentData,
+        ],
+        false // Não revalidar ainda
+      );
+
+      // Criar a transação no servidor
       const result = await createTransaction(data);
 
       console.log("✅ Resultado da criação:", result);
 
       if (result.success) {
-        console.log("🔄 Invalidando cache...");
+        console.log("🔄 Invalidando cache para buscar dados reais...");
 
-        // Invalidação tripla para garantir que funcione
-        await mutate("/api/transactions", undefined, { revalidate: true });
+        // Agora invalidar para buscar os dados reais do servidor
+        await mutate(swrKey, undefined, { revalidate: true });
 
-        // Pequeno delay para garantir que a invalidação foi processada
-        setTimeout(async () => {
-          await mutate("/api/transactions");
-          console.log("✨ Cache invalidado com delay!");
-        }, 100);
-
-        console.log("✨ Cache invalidado imediatamente!");
+        console.log("✨ Cache invalidado e dados reais carregados!");
+      } else {
+        // Se falhou, reverter o optimistic update
+        await mutate(swrKey, undefined, { revalidate: true });
       }
 
       return result;
     } catch (error) {
       console.error("❌ Erro ao criar transação:", error);
+
+      // Reverter optimistic update em caso de erro
+      const swrKey = `/api/transactions?userId=${data.userId}`;
+      await mutate(swrKey, undefined, { revalidate: true });
+
       return { success: false, message: "Erro ao criar transação" };
     }
   };

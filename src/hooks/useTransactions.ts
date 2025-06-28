@@ -1,31 +1,16 @@
 import useSWR, { mutate } from "swr";
 import { createTransaction } from "../app/(session)/movimentacao/new/_actions/create-transaction";
+import type { Transaction } from "@/types/transaction";
+import type { CreateTransaction } from "@/types/new-transaction";
 
-interface Transaction {
-  id: string;
-  title: string;
-  amount: number;
-  type: "INCOME" | "EXPENSE";
-  date: string | Date;
-  userId: string;
-}
-
-interface CreateTransactionData {
-  title: string;
-  amount: number;
-  type: "INCOME" | "EXPENSE";
-  date: string;
-  userId: string;
-}
-
-interface TransactionResponse {
-  id: string;
-  title: string;
-  amount: number; // Agora sempre number pois a API já converte
-  type: "INCOME" | "EXPENSE";
-  date: string;
-  userId: string;
-}
+// Response da API, pode ser igual ao Transaction, mas sem o campo user opcional
+type TransactionResponse = Omit<
+  Transaction,
+  "user" | "createdAt" | "updatedAt"
+> & {
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+};
 
 interface UseTransactionsOptions {
   refreshInterval?: number;
@@ -52,7 +37,7 @@ export function useTransactions(
   const fetcher = async (url: string): Promise<Transaction[]> => {
     console.log(`[useTransactions] Fetcher chamado para url: ${url}`);
     const response = await fetch(url, {
-      cache: "no-store", // Força sempre buscar dados frescos
+      cache: "no-store",
       headers: {
         "Cache-Control": "no-cache",
       },
@@ -68,10 +53,12 @@ export function useTransactions(
     console.log("[useTransactions] Dados recebidos do backend:", data);
 
     // Converter para Transaction format
-    const parsed = data.map((t: TransactionResponse) => ({
+    const parsed: Transaction[] = data.map((t) => ({
       ...t,
-      amount: Number(t.amount), // Garantir que é number
+      amount: Number(t.amount),
       date: new Date(t.date),
+      createdAt: t.createdAt ? new Date(t.createdAt) : new Date(),
+      updatedAt: t.updatedAt ? new Date(t.updatedAt) : new Date(),
     }));
     console.log(
       "[useTransactions] Dados convertidos para Transaction:",
@@ -133,16 +120,19 @@ export function useTransactionMutations() {
 
 // Hook específico para criar transações com atualização automática
 export function useCreateTransaction() {
-  const createTransactionWithCache = async (data: CreateTransactionData) => {
+  const createTransactionWithCache = async (data: CreateTransaction) => {
     try {
       console.log("🚀 Criando transação...", data);
 
       // Optimistic update - adicionar à lista antes mesmo de salvar no servidor
+      const now = new Date();
       const optimisticTransaction: Transaction = {
-        id: `temp-${Date.now()}`, // ID temporário
+        id: `temp-${Date.now()}`,
         ...data,
         date: new Date(data.date),
         amount: Number(data.amount),
+        createdAt: now,
+        updatedAt: now,
       };
 
       // Atualizar SWR com dados otimistas

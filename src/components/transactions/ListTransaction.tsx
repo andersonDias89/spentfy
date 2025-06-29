@@ -31,7 +31,7 @@ export default function ListTransaction({
   }
 
   return (
-    <ul className="divide-y divide-gray-200 bg-zinc-900 rounded-lg shadow-md overflow-hidden">
+    <ul className="divide-y divide-gray-200  bg-zinc-900 rounded-lg shadow-md overflow-hidden">
       {transactions.map((tx, idx) => {
         console.log(
           `[ListTransaction] Transação #${idx + 1} recebida para renderização:`,
@@ -49,7 +49,7 @@ export default function ListTransaction({
         return (
           <li
             key={tx.id}
-            className={`flex items-center justify-between px-6 py-4 hover:bg-zinc-800 transition-colors ${
+            className={`flex items-center justify-between px-6 py-4 hover:bg-zinc-800 transition-colors duration-700 cursor-pointer ${
               tx.type === "INCOME"
                 ? "border-l-4 border-green-800"
                 : "border-l-4 border-red-900"

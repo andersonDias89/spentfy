@@ -43,7 +43,7 @@ export default function Sidebar({ links, className = "" }: SidebarProps) {
   return (
     <div className={`flex ${className}`}>
       {/* Sidebar Lateral */}
-      <div className="bg-zinc-800 h-screen flex flex-col items-center p-4 transition-all duration-300">
+      <div className="bg-zinc-800 h-full flex flex-col items-center p-4 transition-all duration-300">
         <div
           className="mb-6"
           onClick={toggleSidebar}

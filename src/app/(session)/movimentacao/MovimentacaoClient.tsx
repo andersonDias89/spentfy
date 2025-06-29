@@ -1,8 +1,9 @@
 "use client";
 
-import { HeaderAccordion, ListTransaction } from "@/components";
 import { useTransactions } from "@/hooks/useTransactions";
 import { Transaction } from "@/lib/types/transaction";
+import ListTransaction from "@/components/transactions/ListTransaction";
+import { Button } from "@/common/ui";
 
 interface MovimentacaoClientProps {
   userId: string;
@@ -18,10 +19,6 @@ export default function MovimentacaoClient({
     revalidateOnFocus: false,
     refreshInterval: 0,
   });
-
-  function handleSuccess() {
-    // O hook createTransactionWithCache já faz toda a gestão de cache automaticamente
-  }
 
   // Mostrar loading enquanto carrega
   if (isLoading) {
@@ -61,21 +58,14 @@ export default function MovimentacaoClient({
   );
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
-      <HeaderAccordion userId={userId} onSuccess={handleSuccess} />
+    <div className="w-full flex flex-col flex-1 h-full p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-800">
-          Minhas Movimentações
-        </h2>
-        <button
-          onClick={() => refresh()}
-          className="text-sm text-blue-600 hover:text-blue-800 underline"
-          disabled={isLoading}
-        >
-          {isLoading ? "Atualizando..." : "Atualizar"}
-        </button>
+        <h2 className="text-xl font-bold text-white">Minhas Movimentações</h2>
+        <Button>Criar Movimentação</Button>
       </div>
-      <ListTransaction transactions={displayTransactions} />
+      <div className="flex-1 overflow-auto">
+        <ListTransaction transactions={displayTransactions} />
+      </div>
     </div>
   );
 }

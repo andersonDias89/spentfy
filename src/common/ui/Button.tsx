@@ -27,10 +27,8 @@ export const Button = ({
       disabled={disabled}
       className={clsx(
         "flex gap-2",
-        "px-6 py-2 rounded-md bg-zinc-900 text-white font-medium transition-all duration-300",
-        "border border-[#2e2e2e] shadow-md",
-        "hover:shadow-[0_0_10px_#3b82f6]",
-        "focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2",
+        "px-6 py-2 rounded-md bg-green-500 text-bold text-black font-medium transition-all duration-300",
+        "hover:bg-green-600 focus:outline-none",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}

@@ -5,13 +5,11 @@ import { CreateTransactionForm } from "@/components";
 
 interface HeaderAccordionProps {
   userId: string;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
-export default function HeaderAccordion({
-  userId,
-  onSuccess,
-}: HeaderAccordionProps) {
+export default function HeaderAccordion(props: HeaderAccordionProps) {
+  const { userId, onSuccess } = props;
   const [open, setOpen] = useState(false);
 
   return (

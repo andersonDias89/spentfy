@@ -61,7 +61,7 @@ export default function MovimentacaoClient({
   );
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
+    <div className="w-full flex flex-col flex-1 h-full p-4">
       <HeaderAccordion userId={userId} onSuccess={handleSuccess} />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-800">
@@ -75,7 +75,9 @@ export default function MovimentacaoClient({
           {isLoading ? "Atualizando..." : "Atualizar"}
         </button>
       </div>
-      <ListTransaction transactions={displayTransactions} />
+      <div className="flex-1 overflow-auto">
+        <ListTransaction transactions={displayTransactions} />
+      </div>
     </div>
   );
 }

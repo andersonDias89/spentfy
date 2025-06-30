@@ -4,8 +4,8 @@ import { SidebarProps } from "./types";
 import { SIDEBAR_CONFIG, SIDEBAR_STYLES } from "./constants";
 import { useSidebar } from "./useSidebar";
 import SidebarToggle from "./SidebarToggle";
-import SidebarQuickAction from "./SidebarQuickAction";
 import SidebarNavigation from "./SidebarNavigation";
+import SidebarCollapsedNavigation from "./SidebarCollapsedNavigation";
 
 export default function Sidebar({ links, className = "" }: SidebarProps) {
   const {
@@ -42,7 +42,7 @@ export default function Sidebar({ links, className = "" }: SidebarProps) {
         />
 
         {!isOpen && (
-          <SidebarQuickAction onCreateTransaction={handleCreateTransaction} />
+          <SidebarCollapsedNavigation links={links} currentPath={currentPath} />
         )}
       </div>
 

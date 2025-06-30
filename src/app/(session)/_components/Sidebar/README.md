@@ -6,22 +6,26 @@ Um componente de sidebar modular e responsivo para o sistema Spentfy.
 
 ```
 Sidebar/
-├── index.ts                 # Exportações principais
-├── Sidebar.tsx             # Componente principal
-├── SidebarToggle.tsx       # Botão de toggle do sidebar
-├── SidebarQuickAction.tsx  # Ação rápida (criar transação)
-├── SidebarNavigation.tsx   # Navegação com destaque de página ativa
-├── useSidebar.ts           # Hook personalizado para estado
-├── types.ts                # Tipos TypeScript
-├── constants.ts            # Constantes e configurações
-└── README.md              # Este arquivo
+├── index.ts                        # Exportações principais
+├── Sidebar.tsx                    # Componente principal
+├── SidebarToggle.tsx              # Botão de toggle do sidebar
+├── SidebarQuickAction.tsx         # Ação rápida (criar transação)
+├── SidebarNavigation.tsx          # Navegação expandida com nomes
+├── SidebarCollapsedNavigation.tsx # Navegação recolhida (apenas ícones)
+├── useSidebar.ts                  # Hook personalizado para estado
+├── types.ts                       # Tipos TypeScript
+├── constants.ts                   # Constantes e configurações
+├── utils.ts                       # Utilitários e mapeamento de ícones
+└── README.md                      # Este arquivo
 ```
 
 ## Funcionalidades
 
 - **Estado Inteligente**: Gerencia automaticamente o estado de abertura/fechamento
-- **Navegação Ativa**: Destaca a página atual automaticamente
-- **Ação Rápida**: Botão para criar nova transação
+- **Navegação Adaptativa**:
+  - **Recolhida**: Apenas ícones com destaque da página ativa
+  - **Expandida**: Nomes completos e seção de criação de transação
+- **Navegação Ativa**: Destaque automático da página atual
 - **Responsivo**: Adapta-se a diferentes tamanhos de tela
 - **Acessível**: Inclui suporte a navegação por teclado e ARIA labels
 - **Ícones Lucide**: Usa ícones modernos e consistentes

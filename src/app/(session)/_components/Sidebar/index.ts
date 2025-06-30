@@ -5,6 +5,7 @@ export { default as Sidebar } from "./Sidebar";
 export { default as SidebarToggle } from "./SidebarToggle";
 export { default as SidebarQuickAction } from "./SidebarQuickAction";
 export { default as SidebarNavigation } from "./SidebarNavigation";
+export { default as SidebarCollapsedNavigation } from "./SidebarCollapsedNavigation";
 
 // Hook
 export { useSidebar } from "./useSidebar";

@@ -1,6 +1,6 @@
 import "../globals.css";
 import Sidebar from "@/app/(session)/_components/Sidebar";
-import { ROUTES } from "@/lib/constants";
+import { SIDEBAR_LINKS } from "@/app/(session)/_components/Sidebar/constants";
 
 export default function DashboardLayout({
   children,
@@ -8,15 +8,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
-      <Sidebar
-        links={[
-          { label: "Dashboard", href: ROUTES.DASHBOARD },
-          { label: "Transações", href: ROUTES.TRANSACTIONS },
-        ]}
-      />
-      <main className="flex-1 bg-zinc-950 text-white min-h-screen p-4">
-        {children}
+    <div className="flex h-screen bg-zinc-950">
+      <Sidebar links={SIDEBAR_LINKS} />
+      <main className="flex-1 text-white overflow-auto">
+        <div className="p-6">{children}</div>
       </main>
     </div>
   );

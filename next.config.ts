@@ -28,11 +28,24 @@ const nextConfig: NextConfig = {
   ],
   // 2. Ativar React Strict Mode
   reactStrictMode: true,
-  // 3. Ativar SWC minify para evitar vazamento de código
 
-  // 4. Forçar HTTPS (se estiver atrás de proxy, configure no proxy também)
-  // 5. Desabilitar diretórios públicos desnecessários
-  // 6. Outras opções de segurança podem ser adicionadas conforme necessidade
+  // 3. Configuração de imagens
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        port: "",
+        pathname: "/u/**",
+      },
+    ],
+  },
+
+  // 4. Ativar SWC minify para evitar vazamento de código
+
+  // 5. Forçar HTTPS (se estiver atrás de proxy, configure no proxy também)
+  // 6. Desabilitar diretórios públicos desnecessários
+  // 7. Outras opções de segurança podem ser adicionadas conforme necessidade
 };
 
 export default nextConfig;

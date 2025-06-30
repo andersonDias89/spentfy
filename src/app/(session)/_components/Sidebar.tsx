@@ -71,10 +71,10 @@ export default function Sidebar({ links, className = "" }: SidebarProps) {
       >
         {isOpen && (
           <div className="space-y-6">
-            <div>
+            {/*   <div>
               <h2 className="font-bold text-sm mb-1">Sua Biblioteca</h2>
-            </div>
-
+            </div> */}
+            {/* 
             <div className="bg-zinc-800 rounded p-3 flex flex-col gap-2">
               <p className="font-bold text-sm">
                 Crie agora sua movimentação financeira
@@ -86,7 +86,7 @@ export default function Sidebar({ links, className = "" }: SidebarProps) {
               >
                 Criar Movimentação
               </button>
-            </div>
+            </div> */}
 
             <div className="flex flex-col gap-1">
               {links.map((link) => (

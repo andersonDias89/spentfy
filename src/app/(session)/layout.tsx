@@ -11,10 +11,13 @@ export default function DashboardLayout({
 }) {
   return (
     <SessionProvider>
-      <div className="flex h-screen bg-zinc-950">
-        <Sidebar links={SIDEBAR_LINKS} />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header />
+      <div className="h-screen bg-zinc-950 flex flex-col">
+        {/* Header fixo no topo */}
+        <Header className="fixed top-0 left-0 right-0 z-50 shadow-lg" />
+
+        {/* Container para Sidebar + Conteúdo principal */}
+        <div className="flex flex-1 pt-16 overflow-hidden">
+          <Sidebar links={SIDEBAR_LINKS} />
           <main className="flex-1 text-white overflow-auto">
             <div className="p-6">{children}</div>
           </main>
